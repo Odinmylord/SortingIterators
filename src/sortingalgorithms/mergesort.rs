@@ -1,3 +1,5 @@
+/// This file contains mergesort, I know that there are probably better ways to implement it but I
+/// did it this way because I saw it as a challenge.
 use std::cmp::Ordering;
 
 use crate::sortingutils::traits::{ComparatorType, VectorElement};
@@ -77,7 +79,8 @@ impl< T> Iterator for MergeSortIter< T>
     type Item = (usize, usize);
 
     fn next(&mut self) -> Option<Self::Item> {
-        // The idea is to use the indexes vector as if it is a binary tree and build the recursive calls on top of that
+        // The idea is to use the indexes vector (heap vector) as if it is a binary tree and store
+        // recursive calls inside it to handle recursion "manually".
         if self.merge_r && self.merge_l {
             self.merge_l = false;
             self.merge_r = false;

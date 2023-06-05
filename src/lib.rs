@@ -1,4 +1,4 @@
-mod sortingutils{
+mod sortingutils {
     pub mod enums;
     pub mod utils;
     pub mod traits;
@@ -136,6 +136,8 @@ mod sorting_tests {
         let mut vector = vec![1, 2, 3];
         let final_vector = vec![1, 2, 3];
         vector.shuffle(&mut rng);
+        // Only gets printed if test fails
+        dbg!(&vector);
         let mut sorter = get_sorting_iterator!(BogoSortIter, vector, |x,y| i32::cmp(x,y));
         let mut res = sorter.next();
         while res.is_some() {
@@ -147,7 +149,7 @@ mod sorting_tests {
     #[test]
     fn test_pos_highlight_iterators() {
         let mut rng = thread_rng();
-        let mut vector = vec![2, 1, 5,4];
+        let mut vector = vec![2, 1, 5, 4];
         let final_vector = vec![1, 2, 4, 5];
         // This initialization is needed so that the first take_vector can work
         let mut sorter: Box<dyn SortingIterator<i32, Item=usize>>;
@@ -155,6 +157,8 @@ mod sorting_tests {
         for sort_alg in SortingPosHighlight::iter() {
             vector = sorter.take_vector();
             vector.shuffle(&mut rng);
+            // Only gets printed if test fails
+            dbg!(&vector);
             sorter = match sort_alg {
                 SortingPosHighlight::CycleSort => {
                     get_sorting_iterator!(CycleSortIter, vector, |x, y| i32::cmp(x, y))
@@ -182,6 +186,8 @@ mod sorting_tests {
         for sort_alg in SortingPairPosHighlight::iter() {
             vector = sorter.take_vector();
             vector.shuffle(&mut rng);
+            // Only gets printed if test fails
+            dbg!(&vector);
             sorter = match sort_alg {
                 SortingPairPosHighlight::HeapSort => {
                     get_sorting_iterator!(HeapSortIter, vector, |x, y| i32::cmp(x, y))
@@ -200,16 +206,16 @@ mod sorting_tests {
 }
 
 #[cfg(test)]
-mod stalin_sort_test{
+mod stalin_sort_test {
     use crate::get_sorting_iterator;
     use crate::sortingalgorithms::SortingIterator;
     use crate::sortingalgorithms::stalinsort::StalinSortIter;
     use crate::sortingutils::traits::HasDefault;
 
     #[test]
-    fn test_results(){
-        let vector = vec![2,1,5,4];
-        let expected_vector = vec![2,5];
+    fn test_results() {
+        let vector = vec![2, 1, 5, 4];
+        let expected_vector = vec![2, 5];
         let mut sorter = get_sorting_iterator!(StalinSortIter, vector, |x, y| i32::cmp(x, y));
         // The first element will never be removed
         assert_eq!(sorter.next(), Some(1));
@@ -219,13 +225,38 @@ mod stalin_sort_test{
     }
 
     #[test]
-    fn test_reverse(){
-        let vector = vec![5,4,3,2];
+    fn test_reverse() {
+        let vector = vec![5, 4, 3, 2];
         let expected_vector = vec![5];
         let mut sorter = get_sorting_iterator!(StalinSortIter, vector, |x, y| i32::cmp(x, y));
         assert_eq!(sorter.next(), Some(4));
         assert_eq!(sorter.next(), Some(3));
         assert_eq!(sorter.next(), Some(2));
         assert_eq!(sorter.take_vector(), expected_vector);
+    }
+}
+
+#[cfg(test)]
+mod merge_sort_tests {
+    use crate::get_sorting_iterator;
+    use crate::sorting_tests::SortingIterator;
+    use crate::sortingalgorithms::mergesort::MergeSortIter;
+
+    #[test]
+    fn test_steps() {
+        let vector = vec![2, 5, 7, 8, 3];
+        let expected_vector = vec![2, 3, 5, 7, 8];
+        let mut sorter = get_sorting_iterator!(MergeSortIter, vector, |x, y| i32::cmp(x, y));
+        assert_eq!(sorter.next(), Some((0,2)));
+        assert_eq!(sorter.next(), Some((0,1)));
+        // elements in pos 0 and 1 are already ordered so it tries to sort the other half
+        assert_eq!(sorter.next(), Some((2,2)));
+        // merge the two vectors
+        assert_eq!(sorter.next(), Some((0,2)));
+        // sort the second half
+        assert_eq!(sorter.next(), Some((3,4)));
+        // merge the first and second half and finish
+        assert_eq!(sorter.next(), None);
+        assert_eq!(sorter.get_vector(), &expected_vector);
     }
 }
