@@ -19,7 +19,8 @@ There also is __BogoSort__ which isn't part of the above-mentioned categories.
 
 # Usage
 To use the algorithms simply implement the `VectorElement` trait for the type that you are going to use. \
-After this using the `get_sorting_iterator(EnumElement, vector, comparator)` or by calling `new()` on the class you can get an istance.\
+After this using the `get_sorting_iterator(EnumElement, vector, comparator)` or by calling `new()` on the class of the
+iterator you are interested in you can get an instance.\
 The next step is to call the `.next()` method and see what element the algorithm is working on.
 
 # License
