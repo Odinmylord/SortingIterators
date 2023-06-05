@@ -1,4 +1,4 @@
-mod sortingutils {
+pub mod sortingutils {
     pub mod enums;
     pub mod utils;
     pub mod traits;
